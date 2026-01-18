@@ -7,6 +7,17 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Products } from './collections/Products'
+import { HeroSlider } from './globals/HeroSlider'
+import { SiteSettings } from './globals/SiteSettings'
+import { Features } from './globals/Features'
+import { HomepageAbout } from './globals/HomepageAbout'
+import { HomepageProducts } from './globals/HomepageProducts'
+import { HomepageCTA } from './globals/HomepageCTA'
+import { AboutPage } from './globals/AboutPage'
+import { ContactPage } from './globals/ContactPage'
+import { AgenPage } from './globals/AgenPage'
+import { DistributorPage } from './globals/DistributorPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,8 +28,15 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Logo: './components/admin/Logo',
+        Icon: './components/admin/Icon',
+      },
+    },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Products],
+  globals: [HeroSlider, SiteSettings, Features, HomepageAbout, HomepageProducts, HomepageCTA, AboutPage, ContactPage, AgenPage, DistributorPage],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

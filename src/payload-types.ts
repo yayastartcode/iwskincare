@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    products: Product;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +89,30 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'hero-slider': HeroSlider;
+    'site-settings': SiteSetting;
+    features: Feature;
+    'homepage-about': HomepageAbout;
+    'homepage-products': HomepageProduct;
+    'homepage-cta': HomepageCta;
+    'about-page': AboutPage;
+    'contact-page': ContactPage;
+    'agen-page': AgenPage;
+    'distributor-page': DistributorPage;
+  };
+  globalsSelect: {
+    'hero-slider': HeroSliderSelect<false> | HeroSliderSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    features: FeaturesSelect<false> | FeaturesSelect<true>;
+    'homepage-about': HomepageAboutSelect<false> | HomepageAboutSelect<true>;
+    'homepage-products': HomepageProductsSelect<false> | HomepageProductsSelect<true>;
+    'homepage-cta': HomepageCtaSelect<false> | HomepageCtaSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'contact-page': ContactPageSelect<false> | ContactPageSelect<true>;
+    'agen-page': AgenPageSelect<false> | AgenPageSelect<true>;
+    'distributor-page': DistributorPageSelect<false> | DistributorPageSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -146,6 +170,9 @@ export interface User {
  */
 export interface Media {
   id: string;
+  /**
+   * Deskripsi gambar untuk SEO dan aksesibilitas
+   */
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -158,6 +185,117 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Kelola produk skincare
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  name: string;
+  /**
+   * Otomatis dari nama produk (bisa diedit manual)
+   */
+  slug: string;
+  images?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  category?: ('cleanser' | 'toner' | 'serum' | 'moisturizer' | 'sunscreen' | 'masker' | 'treatment' | 'paket') | null;
+  /**
+   * Tampil di card produk (maks 150 karakter)
+   */
+  shortDescription?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  benefits?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  ingredients?: string | null;
+  howToUse?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Contoh: 30ml, 50g
+   */
+  size?: string | null;
+  /**
+   * Harga dalam Rupiah
+   */
+  price?: number | null;
+  /**
+   * Kosongkan jika tidak ada diskon
+   */
+  discountPrice?: number | null;
+  /**
+   * Tampilkan di homepage
+   */
+  isFeatured?: boolean | null;
+  isActive?: boolean | null;
+  /**
+   * Link WhatsApp atau marketplace (opsional)
+   */
+  orderLink?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -190,6 +328,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -272,6 +414,73 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  category?: T;
+  shortDescription?: T;
+  description?: T;
+  benefits?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  ingredients?: T;
+  howToUse?: T;
+  size?: T;
+  price?: T;
+  discountPrice?: T;
+  isFeatured?: T;
+  isActive?: T;
+  orderLink?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -312,6 +521,858 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Kelola gambar slider untuk hero section di homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-slider".
+ */
+export interface HeroSlider {
+  id: string;
+  slides?:
+    | {
+        /**
+         * Ukuran rekomendasi: 1920x800 pixels
+         */
+        image: string | Media;
+        /**
+         * Deskripsi gambar untuk aksesibilitas
+         */
+        alt?: string | null;
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  settings?: {
+    autoPlay?: boolean | null;
+    autoPlayInterval?: number | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola logo, navigasi, SEO, dan pengaturan umum situs
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  seo: {
+    /**
+     * Nama situs yang tampil di browser tab
+     */
+    siteTitle: string;
+    /**
+     * Deskripsi untuk SEO (meta description)
+     */
+    siteDescription?: string | null;
+    /**
+     * Kata kunci untuk SEO, pisahkan dengan koma (contoh: skincare, perawatan kulit, kecantikan)
+     */
+    keywords?: string | null;
+    /**
+     * Icon yang tampil di browser tab (rekomendasi: 32x32 atau 64x64 PNG/ICO)
+     */
+    favicon?: (string | null) | Media;
+    /**
+     * Gambar yang tampil saat link dibagikan di social media (rekomendasi: 1200x630)
+     */
+    ogImage?: (string | null) | Media;
+  };
+  logo?: {
+    /**
+     * Upload logo situs (rekomendasi: PNG transparan, tinggi 40-60px)
+     */
+    image?: (string | null) | Media;
+    /**
+     * Teks yang ditampilkan jika tidak ada logo image
+     */
+    text?: string | null;
+  };
+  navigation?: {
+    links?:
+      | {
+          /**
+           * Teks yang ditampilkan di menu
+           */
+          label: string;
+          /**
+           * Contoh: /produk, /tentang, https://wa.me/628xxx
+           */
+          url: string;
+          openInNewTab?: boolean | null;
+          isActive?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    ctaButton?: {
+      show?: boolean | null;
+      label?: string | null;
+      url?: string | null;
+      openInNewTab?: boolean | null;
+    };
+  };
+  contact?: {
+    /**
+     * Format: 6281234567890 (tanpa + atau spasi)
+     */
+    whatsapp?: string | null;
+    email?: string | null;
+    address?: string | null;
+  };
+  socialMedia?: {
+    /**
+     * Link lengkap ke Instagram (contoh: https://instagram.com/drferihana)
+     */
+    instagram?: string | null;
+    /**
+     * Link lengkap ke TikTok (contoh: https://tiktok.com/@drferihana)
+     */
+    tiktok?: string | null;
+    /**
+     * Link lengkap ke YouTube (contoh: https://youtube.com/@drferihana)
+     */
+    youtube?: string | null;
+    /**
+     * Link lengkap ke Facebook (contoh: https://facebook.com/drferihana)
+     */
+    facebook?: string | null;
+  };
+  footer?: {
+    /**
+     * Contoh: © 2026 Nama Brand. All rights reserved.
+     */
+    copyrightText?: string | null;
+    showSocialMedia?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola card "Mengapa Memilih Kami" di homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features".
+ */
+export interface Feature {
+  id: string;
+  items?:
+    | {
+        /**
+         * Upload icon (rekomendasi: PNG transparan, ukuran 64x64 atau 128x128)
+         */
+        icon: string | Media;
+        title: string;
+        description: string;
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola section About di homepage (berbeda dengan halaman Tentang Kami)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-about".
+ */
+export interface HomepageAbout {
+  id: string;
+  isActive?: boolean | null;
+  /**
+   * Gambar untuk section about (rekomendasi: 600x600 atau 800x600)
+   */
+  image?: (string | null) | Media;
+  /**
+   * Teks kecil di atas judul
+   */
+  subtitle?: string | null;
+  title: string;
+  /**
+   * Deskripsi tentang brand/klinik (bisa format paragraf, bold, italic, list, dll)
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Poin-poin keunggulan (opsional)
+   */
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  ctaButton?: {
+    show?: boolean | null;
+    label?: string | null;
+    url?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola section produk di homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-products".
+ */
+export interface HomepageProduct {
+  id: string;
+  isActive?: boolean | null;
+  subtitle?: string | null;
+  title?: string | null;
+  description?: string | null;
+  displayType?: ('featured' | 'latest' | 'manual') | null;
+  selectedProducts?: (string | Product)[] | null;
+  maxProducts?: number | null;
+  ctaButton?: {
+    show?: boolean | null;
+    label?: string | null;
+    url?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola section Call-to-Action di homepage
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-cta".
+ */
+export interface HomepageCta {
+  id: string;
+  isActive?: boolean | null;
+  /**
+   * Gambar latar belakang (rekomendasi: 1920x600)
+   */
+  backgroundImage?: (string | null) | Media;
+  title: string;
+  description?: string | null;
+  button?: {
+    label?: string | null;
+    url?: string | null;
+    openInNewTab?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola konten halaman Tentang Kami
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: string;
+  /**
+   * Gambar utama di bagian atas (rekomendasi: 1920x600)
+   */
+  heroImage?: (string | null) | Media;
+  title?: string | null;
+  subtitle?: string | null;
+  /**
+   * Gambar untuk section tentang (rekomendasi: 600x600)
+   */
+  aboutImage?: (string | null) | Media;
+  aboutTitle?: string | null;
+  /**
+   * Cerita tentang brand, sejarah, filosofi
+   */
+  aboutContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  visionTitle?: string | null;
+  visionContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  missionTitle?: string | null;
+  missionContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  valuesTitle?: string | null;
+  values?:
+    | {
+        icon?: (string | null) | Media;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola konten halaman Kontak
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page".
+ */
+export interface ContactPage {
+  id: string;
+  title?: string | null;
+  subtitle?: string | null;
+  contacts?:
+    | {
+        type:
+          | 'whatsapp'
+          | 'phone'
+          | 'email'
+          | 'instagram'
+          | 'facebook'
+          | 'tiktok'
+          | 'youtube'
+          | 'address'
+          | 'shopee'
+          | 'tokopedia'
+          | 'other';
+        /**
+         * Contoh: Customer Service, Admin 1, Kantor Pusat
+         */
+        label: string;
+        /**
+         * Nomor telepon, email, username, atau alamat
+         */
+        value: string;
+        /**
+         * Link langsung (opsional, akan di-generate otomatis untuk beberapa tipe)
+         */
+        url?: string | null;
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  operationalHours?: {
+    show?: boolean | null;
+    title?: string | null;
+    hours?:
+      | {
+          /**
+           * Contoh: Senin - Jumat
+           */
+          days: string;
+          /**
+           * Contoh: 08:00 - 17:00 WIB
+           */
+          time: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola konten halaman pendaftaran Agen
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agen-page".
+ */
+export interface AgenPage {
+  id: string;
+  /**
+   * Gambar banner di bagian atas (rekomendasi: 1920x600)
+   */
+  heroImage?: (string | null) | Media;
+  title?: string | null;
+  subtitle?: string | null;
+  /**
+   * Penjelasan tentang program keagenan
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  benefits?:
+    | {
+        icon?: (string | null) | Media;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  requirements?: {
+    title?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    title?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonUrl?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Kelola konten halaman pendaftaran Distributor
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "distributor-page".
+ */
+export interface DistributorPage {
+  id: string;
+  /**
+   * Gambar banner di bagian atas (rekomendasi: 1920x600)
+   */
+  heroImage?: (string | null) | Media;
+  title?: string | null;
+  subtitle?: string | null;
+  /**
+   * Penjelasan tentang program distributor
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  benefits?:
+    | {
+        icon?: (string | null) | Media;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  requirements?: {
+    title?: string | null;
+    items?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  coverage?: {
+    show?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    areas?:
+      | {
+          name: string;
+          isAvailable?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    title?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonUrl?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-slider_select".
+ */
+export interface HeroSliderSelect<T extends boolean = true> {
+  slides?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        isActive?: T;
+        id?: T;
+      };
+  settings?:
+    | T
+    | {
+        autoPlay?: T;
+        autoPlayInterval?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  seo?:
+    | T
+    | {
+        siteTitle?: T;
+        siteDescription?: T;
+        keywords?: T;
+        favicon?: T;
+        ogImage?: T;
+      };
+  logo?:
+    | T
+    | {
+        image?: T;
+        text?: T;
+      };
+  navigation?:
+    | T
+    | {
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              openInNewTab?: T;
+              isActive?: T;
+              id?: T;
+            };
+        ctaButton?:
+          | T
+          | {
+              show?: T;
+              label?: T;
+              url?: T;
+              openInNewTab?: T;
+            };
+      };
+  contact?:
+    | T
+    | {
+        whatsapp?: T;
+        email?: T;
+        address?: T;
+      };
+  socialMedia?:
+    | T
+    | {
+        instagram?: T;
+        tiktok?: T;
+        youtube?: T;
+        facebook?: T;
+      };
+  footer?:
+    | T
+    | {
+        copyrightText?: T;
+        showSocialMedia?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "features_select".
+ */
+export interface FeaturesSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        isActive?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-about_select".
+ */
+export interface HomepageAboutSelect<T extends boolean = true> {
+  isActive?: T;
+  image?: T;
+  subtitle?: T;
+  title?: T;
+  description?: T;
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  ctaButton?:
+    | T
+    | {
+        show?: T;
+        label?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-products_select".
+ */
+export interface HomepageProductsSelect<T extends boolean = true> {
+  isActive?: T;
+  subtitle?: T;
+  title?: T;
+  description?: T;
+  displayType?: T;
+  selectedProducts?: T;
+  maxProducts?: T;
+  ctaButton?:
+    | T
+    | {
+        show?: T;
+        label?: T;
+        url?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-cta_select".
+ */
+export interface HomepageCtaSelect<T extends boolean = true> {
+  isActive?: T;
+  backgroundImage?: T;
+  title?: T;
+  description?: T;
+  button?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        openInNewTab?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  title?: T;
+  subtitle?: T;
+  aboutImage?: T;
+  aboutTitle?: T;
+  aboutContent?: T;
+  visionTitle?: T;
+  visionContent?: T;
+  missionTitle?: T;
+  missionContent?: T;
+  valuesTitle?: T;
+  values?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page_select".
+ */
+export interface ContactPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  contacts?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        value?: T;
+        url?: T;
+        isActive?: T;
+        id?: T;
+      };
+  operationalHours?:
+    | T
+    | {
+        show?: T;
+        title?: T;
+        hours?:
+          | T
+          | {
+              days?: T;
+              time?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agen-page_select".
+ */
+export interface AgenPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  title?: T;
+  subtitle?: T;
+  description?: T;
+  benefits?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  requirements?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "distributor-page_select".
+ */
+export interface DistributorPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  title?: T;
+  subtitle?: T;
+  description?: T;
+  benefits?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  requirements?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  coverage?:
+    | T
+    | {
+        show?: T;
+        title?: T;
+        description?: T;
+        areas?:
+          | T
+          | {
+              name?: T;
+              isAvailable?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Media',
+    plural: 'Media',
+  },
   access: {
     read: () => true,
   },
@@ -10,7 +14,35 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: true,
+      label: 'Alt Text',
+      admin: {
+        description: 'Deskripsi gambar untuk SEO dan aksesibilitas',
+      },
     },
   ],
-  upload: true,
+  upload: {
+    staticDir: 'media',
+    mimeTypes: ['image/*'],
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 300,
+        height: 300,
+        position: 'centre',
+      },
+      {
+        name: 'card',
+        width: 600,
+        height: 600,
+        position: 'centre',
+      },
+      {
+        name: 'hero',
+        width: 1920,
+        height: undefined,
+        position: 'centre',
+      },
+    ],
+    adminThumbnail: 'thumbnail',
+  },
 }
