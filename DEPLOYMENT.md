@@ -45,6 +45,7 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 **Copy output dan tambahkan ke GitHub:**
+
 1. Buka GitHub → Settings → SSH and GPG keys
 2. Click "New SSH key"
 3. Paste public key
@@ -123,6 +124,7 @@ NODE_ENV=production
 ```
 
 **Generate PAYLOAD_SECRET:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -148,10 +150,12 @@ chmod -R 755 /var/www/iwskincare/media
 
 ## 4. Setup PM2
 
-### 4.1 Buat ecosystem file
+### 4.1 Ecosystem file
+
+File `ecosystem.config.cjs` sudah ada di repository. Jika perlu edit:
 
 ```bash
-nano ecosystem.config.js
+nano ecosystem.config.cjs
 ```
 
 ```javascript
@@ -178,7 +182,7 @@ module.exports = {
 ### 4.2 Start aplikasi
 
 ```bash
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 pm2 save
 pm2 startup
 ```
@@ -205,36 +209,7 @@ sudo nano /etc/nginx/sites-available/iwskincare
 ```nginx
 server {
     listen 80;
-    listen [::]:80;
-    server_name yourdomain.com www.yourdomain.com;
-
-    # Redirect HTTP to HTTPS
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name yourdomain.com www.yourdomain.com;
-
-    # SSL Certificate (Certbot)
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
-    # Security Headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private auth;
-    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml application/javascript application/json;
+    server_name ahliwebmurah.site www.ahliwebmurah.site;
 
     # Client max body size (untuk upload media)
     client_max_body_size 50M;
@@ -249,7 +224,7 @@ server {
 
     # Static files
     location /_next/static {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -261,7 +236,7 @@ server {
 
     # Next.js app
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -274,6 +249,8 @@ server {
     }
 }
 ```
+
+**Ganti `ahliwebmurah.site` dengan domain Anda.**
 
 ### 5.2 Enable site & test
 
@@ -288,10 +265,26 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 5.3 Setup SSL dengan Certbot (jika belum)
+### 5.3 Setup SSL dengan Certbot
+
+Certbot akan otomatis menambahkan konfigurasi SSL dan redirect HTTPS:
 
 ```bash
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+sudo certbot --nginx -d ahliwebmurah.site -d www.ahliwebmurah.site
+```
+
+Certbot akan:
+
+- Menambahkan `listen 443 ssl`
+- Menambahkan path certificate
+- Menambahkan redirect HTTP → HTTPS
+- Setup auto-renewal
+
+Setelah certbot selesai, test lagi:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
 ---
@@ -315,12 +308,12 @@ cat ~/.ssh/github_deploy
 
 Di repository GitHub → Settings → Secrets and variables → Actions:
 
-| Secret Name | Value |
-|-------------|-------|
-| `VPS_HOST` | IP atau domain VPS |
-| `VPS_USER` | `iwskincare` |
+| Secret Name   | Value                            |
+| ------------- | -------------------------------- |
+| `VPS_HOST`    | IP atau domain VPS               |
+| `VPS_USER`    | `iwskincare`                     |
 | `VPS_SSH_KEY` | Isi private key dari langkah 6.1 |
-| `VPS_PORT` | `22` (atau port SSH custom) |
+| `VPS_PORT`    | `22` (atau port SSH custom)      |
 
 ### 6.3 Buat workflow file
 
@@ -430,10 +423,10 @@ pm2 save
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Start app | `pm2 start ecosystem.config.js` |
-| Stop app | `pm2 stop iwskincare` |
-| Restart app | `pm2 restart iwskincare` |
-| View logs | `pm2 logs iwskincare` |
+| Task          | Command                                                            |
+| ------------- | ------------------------------------------------------------------ |
+| Start app     | `pm2 start ecosystem.config.js`                                    |
+| Stop app      | `pm2 stop iwskincare`                                              |
+| Restart app   | `pm2 restart iwskincare`                                           |
+| View logs     | `pm2 logs iwskincare`                                              |
 | Deploy manual | `git pull && pnpm install && pnpm build && pm2 restart iwskincare` |
