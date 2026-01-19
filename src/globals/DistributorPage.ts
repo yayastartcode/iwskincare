@@ -172,7 +172,9 @@ export const DistributorPage: GlobalConfig = {
           name: 'buttonUrl',
           type: 'text',
           label: 'URL Tombol',
-          defaultValue: 'https://wa.me/6281234567890?text=Halo, saya ingin mendaftar menjadi Distributor',
+          admin: {
+            description: 'Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Distributor',
+          },
         },
       ],
     },

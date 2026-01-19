@@ -53,7 +53,6 @@ export const HomepageCTA: GlobalConfig = {
           name: 'url',
           type: 'text',
           label: 'URL',
-          defaultValue: 'https://wa.me/6281234567890',
         },
         {
           name: 'openInNewTab',

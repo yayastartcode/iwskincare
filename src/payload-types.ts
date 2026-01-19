@@ -616,7 +616,7 @@ export interface SiteSetting {
   };
   contact?: {
     /**
-     * Format: 6281234567890 (tanpa + atau spasi)
+     * Format: 628xxx (tanpa + atau spasi)
      */
     whatsapp?: string | null;
     email?: string | null;
@@ -966,6 +966,9 @@ export interface AgenPage {
     title?: string | null;
     description?: string | null;
     buttonLabel?: string | null;
+    /**
+     * Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Agen
+     */
     buttonUrl?: string | null;
   };
   updatedAt?: string | null;
@@ -1036,6 +1039,9 @@ export interface DistributorPage {
     title?: string | null;
     description?: string | null;
     buttonLabel?: string | null;
+    /**
+     * Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Distributor
+     */
     buttonUrl?: string | null;
   };
   updatedAt?: string | null;

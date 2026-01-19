@@ -154,7 +154,6 @@ export const SiteSettings: GlobalConfig = {
               name: 'url',
               type: 'text',
               label: 'URL',
-              defaultValue: 'https://wa.me/6281234567890',
               admin: {
                 condition: (data) => data?.navigation?.ctaButton?.show,
               },
@@ -182,7 +181,7 @@ export const SiteSettings: GlobalConfig = {
           type: 'text',
           label: 'Nomor WhatsApp',
           admin: {
-            description: 'Format: 6281234567890 (tanpa + atau spasi)',
+            description: 'Format: 628xxx (tanpa + atau spasi)',
           },
         },
         {

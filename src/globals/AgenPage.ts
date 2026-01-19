@@ -29,7 +29,6 @@ export const AgenPage: GlobalConfig = {
       name: 'subtitle',
       type: 'textarea',
       label: 'Subtitle',
-      defaultValue: 'Dapatkan penghasilan tambahan dengan menjadi agen resmi dr.Ferihana Skincare',
     },
     {
       name: 'description',
@@ -120,7 +119,9 @@ export const AgenPage: GlobalConfig = {
           name: 'buttonUrl',
           type: 'text',
           label: 'URL Tombol',
-          defaultValue: 'https://wa.me/6281234567890?text=Halo, saya ingin mendaftar menjadi Agen',
+          admin: {
+            description: 'Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Agen',
+          },
         },
       ],
     },
