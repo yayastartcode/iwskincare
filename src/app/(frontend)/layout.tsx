@@ -6,12 +6,22 @@ import config from '@payload-config'
 import type { Metadata } from 'next'
 import type { Media } from '@/payload-types'
 
-// Helper to get image URL
+// Get site URL from environment
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+// Helper to get image URL with full domain
 const getImageUrl = (image: number | string | Media | null | undefined): string | null => {
   if (!image) return null
   if (typeof image === 'string') return image
   if (typeof image === 'number') return null
   return image.url ?? null
+}
+
+// Helper to get full URL with domain
+const getFullUrl = (path: string | null): string | null => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  return `${siteUrl}${path.startsWith('/') ? '' : '/'}${path}`
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,10 +35,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const logoText = siteSettings.logo?.text || 'Skincare'
   const siteTitle = seo?.siteTitle || logoText
   const siteDescription = seo?.siteDescription || 'Solusi perawatan kulit terbaik'
-  const faviconUrl = getImageUrl(seo?.favicon)
-  const ogImageUrl = getImageUrl(seo?.ogImage)
+  const faviconPath = getImageUrl(seo?.favicon)
+  const ogImagePath = getImageUrl(seo?.ogImage)
+  
+  // Convert to full URLs
+  const faviconUrl = getFullUrl(faviconPath)
+  const ogImageUrl = getFullUrl(ogImagePath)
 
   return {
+    metadataBase: new URL(siteUrl),
     title: {
       default: siteTitle,
       template: `%s | ${siteTitle}`,
@@ -68,3 +83,4 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     </html>
   )
 }
+
