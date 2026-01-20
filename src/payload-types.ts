@@ -292,6 +292,22 @@ export interface Product {
    * Link WhatsApp atau marketplace (opsional)
    */
   orderLink?: string | null;
+  /**
+   * Upload sertifikat BPOM (gambar atau PDF)
+   */
+  certificates?:
+    | {
+        /**
+         * Upload gambar (JPG, PNG) atau PDF
+         */
+        file: number | Media;
+        /**
+         * Contoh: Sertifikat BPOM, NIE, dll
+         */
+        title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -477,6 +493,13 @@ export interface ProductsSelect<T extends boolean = true> {
   isFeatured?: T;
   isActive?: T;
   orderLink?: T;
+  certificates?:
+    | T
+    | {
+        file?: T;
+        title?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

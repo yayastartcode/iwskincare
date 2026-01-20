@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { Footer } from '../../components/Footer'
+import { ProductTabs } from './ProductTabs'
+import { CertificateViewer } from './CertificateViewer'
 import type { Metadata } from 'next'
 import type { Media, Product } from '@/payload-types'
 
@@ -325,39 +327,51 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
 
           {/* Product Details Tabs */}
-          <div className="mt-16 border-t border-gray-100 pt-12">
-            <div className="grid gap-12 lg:grid-cols-2">
-              {/* Description */}
-              {product.description && (
-                <div>
-                  <h2 className="mb-4 text-xl font-bold text-[#5C5346]">Deskripsi Produk</h2>
-                  <div className="prose prose-p:text-gray-600 prose-strong:text-[#5C5346] prose-ul:text-gray-600 prose-li:text-gray-600">
-                    <RichText data={product.description} />
-                  </div>
-                </div>
-              )}
+          <ProductTabs
+            tabs={[
+              {
+                id: 'description',
+                label: 'Deskripsi Produk',
+                content: (
+                  <div className="space-y-8">
+                    {/* Description */}
+                    {product.description && (
+                      <div>
+                        <div className="prose prose-p:text-gray-600 prose-strong:text-[#5C5346] prose-ul:text-gray-600 prose-li:text-gray-600">
+                          <RichText data={product.description} />
+                        </div>
+                      </div>
+                    )}
 
-              {/* How to Use */}
-              {product.howToUse && (
-                <div>
-                  <h2 className="mb-4 text-xl font-bold text-[#5C5346]">Cara Penggunaan</h2>
-                  <div className="prose prose-p:text-gray-600 prose-strong:text-[#5C5346] prose-ol:text-gray-600 prose-li:text-gray-600">
-                    <RichText data={product.howToUse} />
-                  </div>
-                </div>
-              )}
-            </div>
+                    {/* How to Use */}
+                    {product.howToUse && (
+                      <div>
+                        <h3 className="mb-3 text-lg font-bold text-[#5C5346]">Cara Penggunaan</h3>
+                        <div className="prose prose-p:text-gray-600 prose-strong:text-[#5C5346] prose-ol:text-gray-600 prose-li:text-gray-600">
+                          <RichText data={product.howToUse} />
+                        </div>
+                      </div>
+                    )}
 
-            {/* Ingredients */}
-            {product.ingredients && (
-              <div className="mt-12">
-                <h2 className="mb-4 text-xl font-bold text-[#5C5346]">Komposisi</h2>
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                  {product.ingredients}
-                </p>
-              </div>
-            )}
-          </div>
+                    {/* Ingredients */}
+                    {product.ingredients && (
+                      <div>
+                        <h3 className="mb-3 text-lg font-bold text-[#5C5346]">Komposisi</h3>
+                        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                          {product.ingredients}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ),
+              },
+              {
+                id: 'certificates',
+                label: 'Sertifikat BPOM',
+                content: <CertificateViewer certificates={product.certificates ?? []} />,
+              },
+            ]}
+          />
         </div>
       </section>
 

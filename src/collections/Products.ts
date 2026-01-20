@@ -185,5 +185,37 @@ export const Products: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'certificates',
+      type: 'array',
+      label: 'Sertifikat BPOM',
+      labels: {
+        singular: 'Sertifikat',
+        plural: 'Sertifikat',
+      },
+      admin: {
+        description: 'Upload sertifikat BPOM (gambar atau PDF)',
+      },
+      fields: [
+        {
+          name: 'file',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+          label: 'File Sertifikat',
+          admin: {
+            description: 'Upload gambar (JPG, PNG) atau PDF',
+          },
+        },
+        {
+          name: 'title',
+          type: 'text',
+          label: 'Judul/Keterangan',
+          admin: {
+            description: 'Contoh: Sertifikat BPOM, NIE, dll',
+          },
+        },
+      ],
+    },
   ],
 }
