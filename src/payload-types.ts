@@ -86,7 +86,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {
@@ -98,8 +98,7 @@ export interface Config {
     'homepage-cta': HomepageCta;
     'about-page': AboutPage;
     'contact-page': ContactPage;
-    'agen-page': AgenPage;
-    'distributor-page': DistributorPage;
+    'mitra-page': MitraPage;
   };
   globalsSelect: {
     'hero-slider': HeroSliderSelect<false> | HeroSliderSelect<true>;
@@ -110,8 +109,7 @@ export interface Config {
     'homepage-cta': HomepageCtaSelect<false> | HomepageCtaSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'contact-page': ContactPageSelect<false> | ContactPageSelect<true>;
-    'agen-page': AgenPageSelect<false> | AgenPageSelect<true>;
-    'distributor-page': DistributorPageSelect<false> | DistributorPageSelect<true>;
+    'mitra-page': MitraPageSelect<false> | MitraPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -145,7 +143,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -169,7 +167,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   /**
    * Deskripsi gambar untuk SEO dan aksesibilitas
    */
@@ -219,7 +217,7 @@ export interface Media {
  * via the `definition` "products".
  */
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   /**
    * Otomatis dari nama produk (bisa diedit manual)
@@ -227,7 +225,7 @@ export interface Product {
   slug: string;
   images?:
     | {
-        image: string | Media;
+        image: number | Media;
         id?: string | null;
       }[]
     | null;
@@ -302,7 +300,7 @@ export interface Product {
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -319,24 +317,24 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'products';
-        value: string | Product;
+        value: number | Product;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -346,10 +344,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -369,7 +367,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -529,13 +527,27 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "hero-slider".
  */
 export interface HeroSlider {
-  id: string;
-  slides?:
+  id: number;
+  /**
+   * Gambar untuk desktop (rekomendasi: 1920x800 pixels)
+   */
+  desktopSlides?:
     | {
+        image: number | Media;
         /**
-         * Ukuran rekomendasi: 1920x800 pixels
+         * Deskripsi gambar untuk aksesibilitas
          */
-        image: string | Media;
+        alt?: string | null;
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Gambar untuk mobile (rekomendasi: 768x1000 pixels)
+   */
+  mobileSlides?:
+    | {
+        image: number | Media;
         /**
          * Deskripsi gambar untuk aksesibilitas
          */
@@ -558,7 +570,7 @@ export interface HeroSlider {
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
-  id: string;
+  id: number;
   seo: {
     /**
      * Nama situs yang tampil di browser tab
@@ -575,17 +587,17 @@ export interface SiteSetting {
     /**
      * Icon yang tampil di browser tab (rekomendasi: 32x32 atau 64x64 PNG/ICO)
      */
-    favicon?: (string | null) | Media;
+    favicon?: (number | null) | Media;
     /**
      * Gambar yang tampil saat link dibagikan di social media (rekomendasi: 1200x630)
      */
-    ogImage?: (string | null) | Media;
+    ogImage?: (number | null) | Media;
   };
   logo?: {
     /**
      * Upload logo situs (rekomendasi: PNG transparan, tinggi 40-60px)
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     /**
      * Teks yang ditampilkan jika tidak ada logo image
      */
@@ -657,13 +669,13 @@ export interface SiteSetting {
  * via the `definition` "features".
  */
 export interface Feature {
-  id: string;
+  id: number;
   items?:
     | {
         /**
          * Upload icon (rekomendasi: PNG transparan, ukuran 64x64 atau 128x128)
          */
-        icon: string | Media;
+        icon: number | Media;
         title: string;
         description: string;
         isActive?: boolean | null;
@@ -680,12 +692,12 @@ export interface Feature {
  * via the `definition` "homepage-about".
  */
 export interface HomepageAbout {
-  id: string;
+  id: number;
   isActive?: boolean | null;
   /**
    * Gambar untuk section about (rekomendasi: 600x600 atau 800x600)
    */
-  image?: (string | null) | Media;
+  image?: (number | null) | Media;
   /**
    * Teks kecil di atas judul
    */
@@ -733,13 +745,13 @@ export interface HomepageAbout {
  * via the `definition` "homepage-products".
  */
 export interface HomepageProduct {
-  id: string;
+  id: number;
   isActive?: boolean | null;
   subtitle?: string | null;
   title?: string | null;
   description?: string | null;
   displayType?: ('featured' | 'latest' | 'manual') | null;
-  selectedProducts?: (string | Product)[] | null;
+  selectedProducts?: (number | Product)[] | null;
   maxProducts?: number | null;
   ctaButton?: {
     show?: boolean | null;
@@ -756,12 +768,12 @@ export interface HomepageProduct {
  * via the `definition` "homepage-cta".
  */
 export interface HomepageCta {
-  id: string;
+  id: number;
   isActive?: boolean | null;
   /**
    * Gambar latar belakang (rekomendasi: 1920x600)
    */
-  backgroundImage?: (string | null) | Media;
+  backgroundImage?: (number | null) | Media;
   title: string;
   description?: string | null;
   button?: {
@@ -779,17 +791,17 @@ export interface HomepageCta {
  * via the `definition` "about-page".
  */
 export interface AboutPage {
-  id: string;
+  id: number;
   /**
    * Gambar utama di bagian atas (rekomendasi: 1920x600)
    */
-  heroImage?: (string | null) | Media;
+  heroImage?: (number | null) | Media;
   title?: string | null;
   subtitle?: string | null;
   /**
    * Gambar untuk section tentang (rekomendasi: 600x600)
    */
-  aboutImage?: (string | null) | Media;
+  aboutImage?: (number | null) | Media;
   aboutTitle?: string | null;
   /**
    * Cerita tentang brand, sejarah, filosofi
@@ -844,7 +856,7 @@ export interface AboutPage {
   valuesTitle?: string | null;
   values?:
     | {
-        icon?: (string | null) | Media;
+        icon?: (number | null) | Media;
         title: string;
         description?: string | null;
         id?: string | null;
@@ -860,7 +872,7 @@ export interface AboutPage {
  * via the `definition` "contact-page".
  */
 export interface ContactPage {
-  id: string;
+  id: number;
   title?: string | null;
   subtitle?: string | null;
   contacts?:
@@ -914,21 +926,21 @@ export interface ContactPage {
   createdAt?: string | null;
 }
 /**
- * Kelola konten halaman pendaftaran Agen
+ * Kelola konten halaman pendaftaran Mitra (Agen, Sub Agen, Reseller)
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "agen-page".
+ * via the `definition` "mitra-page".
  */
-export interface AgenPage {
-  id: string;
+export interface MitraPage {
+  id: number;
   /**
    * Gambar banner di bagian atas (rekomendasi: 1920x600)
    */
-  heroImage?: (string | null) | Media;
+  heroImage?: (number | null) | Media;
   title?: string | null;
   subtitle?: string | null;
   /**
-   * Penjelasan tentang program keagenan
+   * Penjelasan tentang program kemitraan
    */
   description?: {
     root: {
@@ -945,104 +957,43 @@ export interface AgenPage {
     };
     [k: string]: unknown;
   } | null;
-  benefits?:
-    | {
-        icon?: (string | null) | Media;
-        title: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  requirements?: {
-    title?: string | null;
-    items?:
-      | {
-          text: string;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  cta?: {
-    title?: string | null;
-    description?: string | null;
-    buttonLabel?: string | null;
-    /**
-     * Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Agen
-     */
-    buttonUrl?: string | null;
-  };
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * Kelola konten halaman pendaftaran Distributor
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "distributor-page".
- */
-export interface DistributorPage {
-  id: string;
-  /**
-   * Gambar banner di bagian atas (rekomendasi: 1920x600)
-   */
-  heroImage?: (string | null) | Media;
-  title?: string | null;
-  subtitle?: string | null;
-  /**
-   * Penjelasan tentang program distributor
-   */
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+  partnerTypes?: {
+    sectionTitle?: string | null;
+    agen?: {
+      title?: string | null;
+      description?: string | null;
+      requirements?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
     };
-    [k: string]: unknown;
-  } | null;
-  benefits?:
-    | {
-        icon?: (string | null) | Media;
-        title: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  requirements?: {
-    title?: string | null;
-    items?:
-      | {
-          text: string;
-          id?: string | null;
-        }[]
-      | null;
+    subAgen?: {
+      title?: string | null;
+      description?: string | null;
+      requirements?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    reseller?: {
+      title?: string | null;
+      description?: string | null;
+      requirements?:
+        | {
+            text: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
   };
-  coverage?: {
-    show?: boolean | null;
+  formSection?: {
     title?: string | null;
     description?: string | null;
-    areas?:
-      | {
-          name: string;
-          isAvailable?: boolean | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  cta?: {
-    title?: string | null;
-    description?: string | null;
-    buttonLabel?: string | null;
-    /**
-     * Contoh: https://wa.me/628xxx?text=Halo saya ingin mendaftar menjadi Distributor
-     */
-    buttonUrl?: string | null;
+    submitButtonLabel?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1052,7 +1003,15 @@ export interface DistributorPage {
  * via the `definition` "hero-slider_select".
  */
 export interface HeroSliderSelect<T extends boolean = true> {
-  slides?:
+  desktopSlides?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        isActive?: T;
+        id?: T;
+      };
+  mobileSlides?:
     | T
     | {
         image?: T;
@@ -1288,93 +1247,60 @@ export interface ContactPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "agen-page_select".
+ * via the `definition` "mitra-page_select".
  */
-export interface AgenPageSelect<T extends boolean = true> {
+export interface MitraPageSelect<T extends boolean = true> {
   heroImage?: T;
   title?: T;
   subtitle?: T;
   description?: T;
-  benefits?:
+  partnerTypes?:
     | T
     | {
-        icon?: T;
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  requirements?:
-    | T
-    | {
-        title?: T;
-        items?:
+        sectionTitle?: T;
+        agen?:
           | T
           | {
-              text?: T;
-              id?: T;
+              title?: T;
+              description?: T;
+              requirements?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
             };
-      };
-  cta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        buttonLabel?: T;
-        buttonUrl?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "distributor-page_select".
- */
-export interface DistributorPageSelect<T extends boolean = true> {
-  heroImage?: T;
-  title?: T;
-  subtitle?: T;
-  description?: T;
-  benefits?:
-    | T
-    | {
-        icon?: T;
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  requirements?:
-    | T
-    | {
-        title?: T;
-        items?:
+        subAgen?:
           | T
           | {
-              text?: T;
-              id?: T;
+              title?: T;
+              description?: T;
+              requirements?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
             };
-      };
-  coverage?:
-    | T
-    | {
-        show?: T;
-        title?: T;
-        description?: T;
-        areas?:
+        reseller?:
           | T
           | {
-              name?: T;
-              isAvailable?: T;
-              id?: T;
+              title?: T;
+              description?: T;
+              requirements?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
             };
       };
-  cta?:
+  formSection?:
     | T
     | {
         title?: T;
         description?: T;
-        buttonLabel?: T;
-        buttonUrl?: T;
+        submitButtonLabel?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -9,9 +9,10 @@ import { Footer } from './components/Footer'
 import type { Media, Product } from '@/payload-types'
 
 // Helper to get image URL
-const getImageUrl = (image: string | Media | null | undefined): string | null => {
+const getImageUrl = (image: number | string | Media | null | undefined): string | null => {
   if (!image) return null
   if (typeof image === 'string') return image
+  if (typeof image === 'number') return null
   return image.url ?? null
 }
 

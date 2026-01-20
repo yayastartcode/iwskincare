@@ -1,5 +1,29 @@
 import type { GlobalConfig } from 'payload'
 
+const slideFields = [
+  {
+    name: 'image',
+    type: 'upload' as const,
+    relationTo: 'media' as const,
+    required: true,
+    label: 'Gambar',
+  },
+  {
+    name: 'alt',
+    type: 'text' as const,
+    label: 'Alt Text',
+    admin: {
+      description: 'Deskripsi gambar untuk aksesibilitas',
+    },
+  },
+  {
+    name: 'isActive',
+    type: 'checkbox' as const,
+    label: 'Aktif',
+    defaultValue: true,
+  },
+]
+
 export const HeroSlider: GlobalConfig = {
   slug: 'hero-slider',
   label: 'Hero Slider',
@@ -11,41 +35,34 @@ export const HeroSlider: GlobalConfig = {
   },
   fields: [
     {
-      name: 'slides',
+      name: 'desktopSlides',
       type: 'array',
-      label: 'Slides',
+      label: 'Desktop Slides',
       minRows: 1,
       maxRows: 10,
       labels: {
         singular: 'Slide',
         plural: 'Slides',
       },
-      fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-          label: 'Gambar',
-          admin: {
-            description: 'Ukuran rekomendasi: 1920x800 pixels',
-          },
-        },
-        {
-          name: 'alt',
-          type: 'text',
-          label: 'Alt Text',
-          admin: {
-            description: 'Deskripsi gambar untuk aksesibilitas',
-          },
-        },
-        {
-          name: 'isActive',
-          type: 'checkbox',
-          label: 'Aktif',
-          defaultValue: true,
-        },
-      ],
+      admin: {
+        description: 'Gambar untuk desktop (rekomendasi: 1920x800 pixels)',
+      },
+      fields: slideFields,
+    },
+    {
+      name: 'mobileSlides',
+      type: 'array',
+      label: 'Mobile Slides',
+      minRows: 1,
+      maxRows: 10,
+      labels: {
+        singular: 'Slide',
+        plural: 'Slides',
+      },
+      admin: {
+        description: 'Gambar untuk mobile (rekomendasi: 768x1000 pixels)',
+      },
+      fields: slideFields,
     },
     {
       name: 'settings',

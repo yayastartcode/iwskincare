@@ -8,58 +8,66 @@ interface HeroSliderProps {
   data: HeroSliderType
 }
 
-export function HeroSlider({ data }: HeroSliderProps) {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(data.settings?.autoPlay ?? true)
+interface SlideData {
+  id?: string | null
+  image: string | Media
+  alt?: string | null
+  isActive?: boolean | null
+}
 
-  // Filter only active slides
-  const slides = data.slides?.filter((slide) => slide.isActive) ?? []
-  const autoPlayInterval = (data.settings?.autoPlayInterval ?? 5) * 1000
+function SliderContent({
+  slides,
+  settings,
+  className,
+}: {
+  slides: SlideData[]
+  settings: HeroSliderType['settings']
+  className?: string
+}) {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(settings?.autoPlay ?? true)
+
+  const activeSlides = slides.filter((slide) => slide.isActive) ?? []
+  const autoPlayInterval = (settings?.autoPlayInterval ?? 5) * 1000
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
-  }, [slides.length])
+    setCurrentSlide((prev) => (prev + 1) % activeSlides.length)
+  }, [activeSlides.length])
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-  }, [slides.length])
+    setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length)
+  }, [activeSlides.length])
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index)
     setIsAutoPlaying(false)
-    // Resume autoplay after 5 seconds
-    setTimeout(() => setIsAutoPlaying(data.settings?.autoPlay ?? true), 5000)
+    setTimeout(() => setIsAutoPlaying(settings?.autoPlay ?? true), 5000)
   }
 
   useEffect(() => {
-    if (!isAutoPlaying || slides.length <= 1) return
+    if (!isAutoPlaying || activeSlides.length <= 1) return
 
     const interval = setInterval(nextSlide, autoPlayInterval)
     return () => clearInterval(interval)
-  }, [isAutoPlaying, nextSlide, autoPlayInterval, slides.length])
+  }, [isAutoPlaying, nextSlide, autoPlayInterval, activeSlides.length])
 
-  // Get image data from Media object
   const getImageData = (image: string | Media): { url: string; alt: string } => {
     if (typeof image === 'string') return { url: image, alt: '' }
     return { url: image.url ?? '', alt: image.alt ?? '' }
   }
 
-  if (slides.length === 0) {
-    return (
-      <section className="relative mx-auto flex h-[700px] w-full max-w-7xl items-center justify-center bg-gray-100 lg:h-[800px]">
-        <p className="text-gray-500">Belum ada slide. Tambahkan slide di Admin Panel.</p>
-      </section>
-    )
+  if (activeSlides.length === 0) {
+    return null
   }
 
   return (
-    <section className="relative mx-auto h-[700px] w-full max-w-7xl overflow-hidden lg:h-[800px]">
+    <div className={className}>
       {/* Slides */}
       <div
         className="flex h-full transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {slides.map((slide, index) => {
+        {activeSlides.map((slide, index) => {
           const imageData = getImageData(slide.image)
           return (
             <div key={slide.id ?? index} className="relative h-full w-full flex-shrink-0">
@@ -76,8 +84,8 @@ export function HeroSlider({ data }: HeroSliderProps) {
         })}
       </div>
 
-      {/* Navigation Arrows - only show if more than 1 slide */}
-      {slides.length > 1 && (
+      {/* Navigation Arrows */}
+      {activeSlides.length > 1 && (
         <>
           <button
             onClick={prevSlide}
@@ -100,7 +108,7 @@ export function HeroSlider({ data }: HeroSliderProps) {
 
           {/* Dots Indicator */}
           <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-3">
-            {slides.map((_, index) => (
+            {activeSlides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -114,6 +122,62 @@ export function HeroSlider({ data }: HeroSliderProps) {
             ))}
           </div>
         </>
+      )}
+    </div>
+  )
+}
+
+export function HeroSlider({ data }: HeroSliderProps) {
+  const desktopSlides = (data.desktopSlides ?? []) as SlideData[]
+  const mobileSlides = (data.mobileSlides ?? []) as SlideData[]
+
+  const hasDesktopSlides = desktopSlides.some((s) => s.isActive)
+  const hasMobileSlides = mobileSlides.some((s) => s.isActive)
+
+  if (!hasDesktopSlides && !hasMobileSlides) {
+    return (
+      <section className="relative mx-auto flex h-[500px] w-full max-w-7xl items-center justify-center bg-gray-100 md:h-[700px] lg:h-[800px]">
+        <p className="text-gray-500">Belum ada slide. Tambahkan slide di Admin Panel.</p>
+      </section>
+    )
+  }
+
+  return (
+    <section className="relative mx-auto w-full max-w-7xl overflow-hidden">
+      {/* Desktop Slider */}
+      {hasDesktopSlides && (
+        <SliderContent
+          slides={desktopSlides}
+          settings={data.settings}
+          className="relative hidden h-[700px] lg:block lg:h-[800px]"
+        />
+      )}
+
+      {/* Mobile Slider */}
+      {hasMobileSlides && (
+        <SliderContent
+          slides={mobileSlides}
+          settings={data.settings}
+          className="relative block h-[500px] md:h-[600px] lg:hidden"
+        />
+      )}
+
+      {/* Fallback: If only desktop slides exist, show them on mobile too */}
+      {!hasMobileSlides && hasDesktopSlides && (
+        <SliderContent
+          slides={desktopSlides}
+          settings={data.settings}
+          className="relative block h-[500px] md:h-[600px] lg:hidden"
+        />
+      )}
+
+      {/* Fallback: If only mobile slides exist, show them on desktop too */}
+      {!hasDesktopSlides && hasMobileSlides && (
+        <SliderContent
+          slides={mobileSlides}
+          settings={data.settings}
+          className="relative hidden h-[700px] lg:block lg:h-[800px]"
+        />
       )}
     </section>
   )
